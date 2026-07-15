@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { Product } from "@/types/product";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -30,14 +31,19 @@ export function ProductCard({ product }: { product: Product }) {
           <span className="font-medium">{product.rating.toFixed(1)}</span>
           <span className="text-muted-foreground">({product.ratingCount})</span>
         </div>
-        <div className="mt-auto flex items-center justify-between pt-3">
-          <span className="text-lg font-semibold">${product.price.toFixed(2)}</span>
-          <Link
-            href={`/products/${product.slug}`}
-            className={cn(buttonVariants({ size: "sm" }))}
-          >
-            View Details
-          </Link>
+        <div className="mt-auto pt-3">
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-semibold">
+              ${product.price.toFixed(2)}
+            </span>
+            <Link
+              href={`/products/${product.slug}`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              View Details
+            </Link>
+          </div>
+          <AddToCartButton product={product} className="mt-2 w-full" />
         </div>
       </div>
     </div>

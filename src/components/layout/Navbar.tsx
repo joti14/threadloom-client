@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/config/site";
 import { PUBLIC_NAV_LINKS, AUTHED_NAV_LINKS } from "@/config/nav";
 import { useSession, signOut } from "@/lib/auth-client";
+import { CartLink } from "@/components/cart/CartLink";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <CartLink />
           {isPending ? null : isLoggedIn ? (
             <button
               type="button"
@@ -61,15 +63,18 @@ export function Navbar() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-foreground md:hidden"
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <CartLink />
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-md p-2 text-foreground"
+            aria-label="Toggle menu"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
