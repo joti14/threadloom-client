@@ -52,7 +52,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative flex h-[65vh] min-h-[440px] w-full items-end overflow-hidden">
+    <section className="relative flex h-[65vh] min-h-110 w-full items-end overflow-hidden">
       {SLIDES.map((slide, i) => {
         const active = i === index;
         return (
@@ -72,7 +72,7 @@ export function Hero() {
               className="object-cover"
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/10" />
           </div>
         );
       })}
