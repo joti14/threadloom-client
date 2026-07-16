@@ -5,15 +5,20 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { signIn } from "@/lib/auth-client";
+import { useToast } from "@/store/toast";
 
 export function GoogleButton({ callbackURL = "/" }: { callbackURL?: string }) {
   const [loading, setLoading] = useState(false);
+  const addToast = useToast((s) => s.addToast);
 
   async function handleClick() {
     setLoading(true);
     // Redirects to Google, then back to callbackURL on the frontend.
-    await signIn.social({ provider: "google", callbackURL });
-    setLoading(false);
+    const { error } = await signIn.social({ provider: "google", callbackURL });
+    if (error) {
+      addToast(error.message || "Failed to initiate Google login");
+      setLoading(false);
+    }
   }
 
   return (

@@ -39,17 +39,23 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <CartLink />
           {isPending ? null : isLoggedIn ? (
-            <button
-              type="button"
-              onClick={() => signOut()}
-              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-            >
-              Log out
-            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-foreground">
+                Hello, {session?.user?.name || session?.user?.email}!
+              </span>
+              <CartLink />
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+              >
+                Log out
+              </button>
+            </div>
           ) : (
             <>
+              <CartLink />
               <Link
                 href="/login"
                 className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
@@ -64,6 +70,11 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-1 md:hidden">
+          {isLoggedIn && (
+            <span className="mr-2 text-sm font-medium text-foreground truncate max-w-[100px]">
+              Hi, {session?.user?.name?.split(' ')[0] || session?.user?.email?.split('@')[0]}
+            </span>
+          )}
           <CartLink />
           <button
             type="button"
