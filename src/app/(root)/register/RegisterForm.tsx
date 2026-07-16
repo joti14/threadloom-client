@@ -7,16 +7,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { signIn } from "@/lib/auth-client";
-import { loginSchema, type LoginValues } from "@/lib/validations/auth";
-import { DEMO_CREDENTIALS } from "@/config/demo";
+import { signUp } from "@/lib/auth-client";
+import { registerSchema, type RegisterValues } from "@/lib/validations/auth";
 import { useToast } from "@/store/toast";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 
 const INPUT_CLASS =
   "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive";
 
-export function LoginForm() {
+export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/";
@@ -26,41 +25,53 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", password: "" },
   });
 
-  async function onSubmit(values: LoginValues) {
+  async function onSubmit(values: RegisterValues) {
     setServerError(null);
-    const { error } = await signIn.email({
+    const { error } = await signUp.email({
+      name: values.name,
       email: values.email,
       password: values.password,
     });
     if (error) {
-      setServerError(error.message ?? "Invalid email or password.");
+      setServerError(error.message ?? "Could not create your account.");
       return;
     }
-    addToast("Logged in successfully");
+    addToast(`Welcome to Threadloom, ${values.name}!`);
     router.push(redirect);
     router.refresh();
   }
 
-  function fillDemo() {
-    setValue("email", DEMO_CREDENTIALS.email, { shouldValidate: true });
-    setValue("password", DEMO_CREDENTIALS.password, { shouldValidate: true });
-  }
-
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-semibold">Welcome back</h1>
+      <h1 className="text-2xl font-semibold">Create your account</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Log in to your Threadloom account.
+        Join Threadloom to shop and track your orders.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4" noValidate>
+        <div>
+          <label htmlFor="name" className="text-sm font-medium">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            aria-invalid={!!errors.name}
+            className={cn(INPUT_CLASS, "mt-1.5")}
+            {...register("name")}
+          />
+          {errors.name && (
+            <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+          )}
+        </div>
+
         <div>
           <label htmlFor="email" className="text-sm font-medium">
             Email
@@ -85,7 +96,7 @@ export function LoginForm() {
           <input
             id="password"
             type="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
             aria-invalid={!!errors.password}
             className={cn(INPUT_CLASS, "mt-1.5")}
             {...register("password")}
@@ -108,15 +119,7 @@ export function LoginForm() {
           disabled={isSubmitting}
           className={cn(buttonVariants({ size: "lg" }), "w-full")}
         >
-          {isSubmitting ? "Logging in..." : "Log in"}
-        </button>
-
-        <button
-          type="button"
-          onClick={fillDemo}
-          className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}
-        >
-          Fill Demo Credentials
+          {isSubmitting ? "Creating account..." : "Create account"}
         </button>
 
         <div className="flex items-center gap-3">
@@ -129,12 +132,12 @@ export function LoginForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
+        Already have an account?{" "}
         <Link
-          href={`/register${redirect !== "/" ? `?redirect=${redirect}` : ""}`}
+          href={`/login${redirect !== "/" ? `?redirect=${redirect}` : ""}`}
           className="font-medium text-foreground underline"
         >
-          Sign up
+          Log in
         </Link>
       </p>
     </div>
