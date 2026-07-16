@@ -5,3 +5,11 @@ export const PRODUCT_CATEGORIES = [
   { value: "footwear", label: "Footwear" },
   { value: "accessories", label: "Accessories" },
 ] as const;
+
+export const CATEGORY_VALUES = [
+  "men",
+  "women",
+  "kids",
+  "footwear",
+  "accessories",
+] as const;
