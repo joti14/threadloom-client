@@ -13,8 +13,18 @@ export function GoogleButton({ callbackURL = "/" }: { callbackURL?: string }) {
 
   async function handleClick() {
     setLoading(true);
-    // Redirects to Google, then back to callbackURL on the frontend.
-    const { error } = await signIn.social({ provider: "google", callbackURL });
+    // callbackURL must be absolute so better-auth redirects back to the
+    // frontend (not the backend root) after Google auth completes.
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "";
+    const absoluteCallbackURL = callbackURL.startsWith("http")
+      ? callbackURL
+      : `${origin}${callbackURL}`;
+
+    const { error } = await signIn.social({
+      provider: "google",
+      callbackURL: absoluteCallbackURL,
+    });
     if (error) {
       addToast(error.message || "Failed to initiate Google login");
       setLoading(false);
